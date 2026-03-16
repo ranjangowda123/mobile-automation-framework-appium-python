@@ -3,6 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+
 # C extensions
 *.so
 
@@ -19,6 +20,7 @@ lib64/
 parts/
 sdist/
 var/
+/.idea
 wheels/
 share/python-wheels/
 *.egg-info/
