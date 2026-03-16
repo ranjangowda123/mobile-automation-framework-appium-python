@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "email": "testuser5203@gmail.com",
+      "profile_details": {
+        "fname": "firstname1",
+        "lname": "lastname1",
+        "language": "Kannada"
+      },
+      "score": 89
+    },
+    {
+      "email": "testuser52031@gmail.com",
+      "profile_details": {
+        "fname": "firstname2",
+        "lname": "lastname2",
+        "language": "Kannada"
+      },
+      "score": 88
+    }
+  ]
+}

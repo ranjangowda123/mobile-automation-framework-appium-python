@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Assertion Failures",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*AssertionError.*"
+  },
+  {
+    "name": "Locator Issue",
+    "messageRegex": ".*NoSuchElementException.*|.*TimeoutException.*"
+  },
+  {
+    "name": "App Crash / ANR",
+    "messageRegex": ".*crash.*|.*ANR.*|.*Process .* has stopped.*"
+  },
+  {
+    "name": "Network Issues",
+    "messageRegex": ".*SocketTimeout.*|.*Connection.*failed.*|.*Network.*"
+  },
+  {
+    "name": "Permission / Device Issue",
+    "messageRegex": ".*permission.*denied.*|.*device.*offline.*"
+  },
+  {
+    "name": "Appium / Session Issue",
+    "messageRegex": ".*SessionNotCreated.*|.*WebDriverException.*|.*session.*not.*found.*"
+  }
+]

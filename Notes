@@ -1,0 +1,833 @@
+Complete end to end mobile automation for AI tutor app:
+------------------------------------------------------
+
+1️⃣ What is Mobile Automation?
+           Mobile automation is the process of automatically validating mobile app flows using
+           tools instead of manual actions.
+
+2️⃣ APPIUM EXECUTION FLOW ( ARCHITECTURE ) — STEP BY STEP (ANDROID):
+   ----------------------------------------------
+
+Step 1: Write automation code
+You write Python automation scripts in PyCharm
+You use Appium Python Client APIs
+
+Step 2: Python → JSON conversion
+Appium Python Client converts Python commands
+Converts them into WebDriver JSON commands
+Reason: Appium Server understands only JSON (WebDriver protocol)
+
+Step 3: Appium Server receives commands
+Appium Server receives the JSON commands over HTTP
+This includes Desired Capabilities during session creation
+
+Step 4: Read Desired Capabilities
+Appium Server reads:
+platformName
+automationName
+deviceName
+app / appPackage / appActivity
+
+Step 5: Decide the driver
+Based on capabilities:
+platformName = Android
+automationName = UIAutomator2
+Appium Server selects UIAutomator2 driver
+
+Step 6: Connect to Android device
+Appium uses Android SDK tools
+Mainly ADB to:
+Detect connected device/emulator
+Communicate with device
+
+Step 7: Install UIAutomator2 server
+Appium installs:
+uiautomator2-server.apk
+uiautomator2-server-test.apk
+These APKs are installed on the Android device
+
+Step 8: Start UIAutomator2 server
+UIAutomator2 server starts running inside the device
+It listens for commands from Appium Server
+
+Step 9: UIAutomator2 framework is used
+UIAutomator2 server uses:
+UIAutomator2 framework
+This framework is already part of Android OS / Android SDK
+Appium does NOT install the framework
+
+Step 10: Execute automation commands
+When you write:
+driver.find_element().click()
+Flow:
+Python script
+→ JSON command
+→ Appium Server
+→ UIAutomator2 Driver
+→ UIAutomator2 Server (on device)
+→ UIAutomator2 Framework
+→ Android OS
+→ App UI
+
+Step 11: Response travels back
+Result (success/failure) travels back the same path
+Your Python script receives the response
+
+Step 12: Session continues or ends
+Commands keep executing under the same session
+When done:
+driver.quit()
+Appium stops session and cleans up
+
+🧱 PHASE 1 — MOBILE FUNDAMENTALS:  ( 10–15 core concepts matter for automation )
+--------------------------------------------------------------------------------
+1️⃣ Types of Mobile Applications:
+           - Native Apps: Built for specific platforms (iOS/Android) using platform-specific languages.
+             Locators used for native apps:   ( 1 to 3 are most used )
+            1️⃣ resource-id ✅ (BEST)
+            2️⃣ accessibility id (or content-desc) ✅ (VERY GOOD)
+            3️⃣ Android UIAutomator (advanced locator)   - used for scroll / Partial_text / Dynamic elements
+            4️⃣ class name ⚠️ (Limited use)
+            5️⃣ text    - used via XPath and Android UIAutomator
+            6️⃣ XPath   - used for complex hierarchies ( text/resource-id/content-desc/contains/multiple_conditions)
+            7️⃣ index ❌ (Avoid)
+
+
+           - Web Apps: Accessible via mobile browsers, built with web technologies.
+             Locators used for web apps:   ( 1 to 3 are most used )
+            1️⃣ id ✅ (BEST)
+            2️⃣ css selector ✅ (VERY GOOD)
+            3️⃣ name ✅ (GOOD)
+            4️⃣ xpath ⚠️ (FLEXIBLE)
+            5️⃣ class name ⚠️ (LIMITED)
+            6️⃣ link text ⚠️ (LIMITED)
+            7️⃣ partial link text ⚠️ (RARE)
+            8️⃣ tag name ⚠️ (VERY LIMITED)
+
+           - Hybrid Apps: Combine native and web technologies for cross-platform compatibility.
+
+2️⃣ APK vs AAB:
+    1. We use APK for automation because it is directly installable.
+    2. AAB is only a Play Store publishing format, not directly installable for testing.
+
+3️⃣ App Lifecycle (Very Important for Automation):
+        🧱 >>>>>
+        👉 These states can appear unexpectedly (permission popup, notification, low memory, etc.).
+        👉 We may not know exactly when they will happen.
+        👉 But in automation, we must handle them properly to avoid test failures.
+        That’s why understanding App Lifecycle = stability in tests 🔥
+        🔹 Pure App Lifecycle States (Core)
+        1️⃣ App launch
+        2️⃣ App in foreground
+        3️⃣ Permission / popup (Paused)
+        4️⃣ App in background
+        5️⃣ App killed / crash
+
+4️⃣ Emulator vs Real Device:
+        🤖 Automation Industry Practice
+        70% execution → Emulator
+        30% validation → Real device
+        Before release → Always real device
+
+5️⃣ Permissions & System Interruptions:
+        🧱 Lifecycle handling includes managing permission popups and interruptions.
+
+6️⃣ App Crash & ANR ( Application Not Responding ) (Very Important):
+        🧱 Handeled while building frameworks:
+
+7️⃣ Logcat & Logs (Very Important for Debugging):
+        🧱 Handeled while building frameworks:
+
+8️⃣ Network Behavior (WiFi / Offline / Slow Internet):
+        🧱 Handeled while building frameworks:
+
+9️⃣ OS Fragmentation & Screen Sizes (Very Important in Mobile):
+        🧱 Handeled while building frameworks:
+
+1️⃣0️⃣ Deep Links (Very Useful in Automation):
+        🧱 Handeled while building frameworks:
+
+1️⃣1️⃣ App Install / Uninstall / Upgrade Behavior:
+👉 Yes ✅ — Install / Upgrade testing should be separate tests.
+
+Runs:
+Before release
+During regression
+Not every CI run
+
+1️⃣2️⃣ Background Services & Notifications:
+        🧱 Handeled while building frameworks:
+
+1️⃣3️⃣ Debug vs Release Builds:
+    Daily automation → Debug build
+    Pre-release regression → Release build
+
+1️⃣4️⃣ Mobile Gestures (Core for Automation)
+
+    Tap
+    Long Press
+    Swipe
+    Scroll
+    Drag & Drop
+    Multi-touch
+    Hide Keyboard
+    Used in 80% of mobile automation flows.
+
+1️⃣ Test data strategy (static vs dynamic data handling)
+2️⃣ Retry mechanism (for flaky tests)
+3️⃣ Parallel execution strategy
+4️⃣ Reporting + logging structure (industry level)
+
+👉  THESE COVERS 95% of Stability for app+device+os
+
+🚀 Phase 2 – Tool Stack Mastery:
+-------------------------------
+    Python
+    PyTest
+    Appium 2.x    ( Engineer Level)
+    Android Studio
+    ADB
+    Git
+    Allure Reporting
+
+
+Android Studio:
+    When you start one emulator (virtual device):
+    What happens internally:
+    1️⃣ Emulator process starts on your PC
+    2️⃣ It opens two ports automatically
+    Example:
+    5554 → Console port
+    5555 → ADB communication port
+    3️⃣ Inside emulator → adbd (ADB daemon) starts
+    4️⃣ On your PC → adb server (port 5037) is already running
+    5️⃣ adb server connects to emulator’s ADB port (5555)
+    6️⃣ Device gets registered in adb device list ✅
+
+
+ADB: ( Android Debugging Bridge )
+🔹 1️⃣ ADB Architecture (Complete Flow)
+ADB = 3 components:
+1️⃣ ADB Client
+→ Command you type (adb devices, adb install)
+2️⃣ ADB Server
+→ Background process on PC (port 5037)
+3️⃣ adbd (Daemon)
+→ Runs inside Android device/emulator
+
+ADB Commands:
+
+adb devices          → Check connected devices/emulators
+adb install app.apk  → Install APK manually
+adb uninstall packagename    → Remove installed app
+adb shell            → Enter device command line
+adb logcat           → View real-time device logs
+adb kill-server      → Stop adb server (reset connection)
+adb start-server     → Start adb server again
+adb forward          → Forward PC port → device port (used by Appium UiAutomator2)
+adb reverse          → Reverse device port → PC port
+adb shell pm list packages → List installed packages
+adb shell dumpsys activity → Get current running activity
+adb shell am start   → Launch specific activity manually
+adb shell getprop    → Get device system properties
+
+
+🔧 Setup Phase includes:
+Android Studio
+SDK
+ADB
+Emulator / real device
+Appium 2.x installation
+Driver installation (appium driver install uiautomator2)
+Environment variables
+Node setup
+All this must be 100% stable first.
+
+1. node -v
+2. npm -v
+3. npm install -g appium   / npm uninstall -g appium    / npm install -g appium@2 ( for 2.0.0 )
+4. appium driver install uiautomator2 / appium driver install uiautomator2@2  ( for 2.0.0 )
+5. verify - appium driver list
+
+PACKAGES:
+pip install Appium-Python-Client
+pip install pytest
+pip install pytest-xdist
+pip install pytest-html   ( optional )
+pip install selenium
+pip install allure-pytest
+pip freeze > requirements.txt   -  It will install all the dependencies
+
+
+⭐ Maximum detailed (server + driver both debug)
+appium --log-level debug:debug
+This is basically Appium 2 replacement for trace 👍
+
+
+IF APPIUM INSPECTOR FAILED / IF Old stuck UiAutomator2 process on device ( SessionException )
+adb shell ps | findstr uiautomator
+
+If you see old processes → that’s the issue.
+
+adb shell am force-stop io.appium.uiautomator2.server
+adb shell am force-stop io.appium.uiautomator2.server.test
+
+Advanced appium plugins:
+-----------------------
+1️⃣ images plugin
+Used for image-based automation (when no locator exists).
+
+2️⃣ relaxed-security plugin
+Allows execution of restricted features like shell commands.
+
+Scopes how sesion needs to passed inside tests:
+----------------------------------------------
+"function" → one driver per test
+"class" → One driver per class
+"module" → One driver per file
+"session" → One driver for entire test run
+
+Ways to get appPackage and appActivity:
+--------------------------------------
+adb shell dumpsys window | findstr mCurrentFocus     -  Both appPackage and appActivity
+
+Ways to install apk into Emulator:
+---------------------------------
+🔹 Install APK using ADB
+   adb install appname.apk
+
+🔹 Unistall APK using ADB
+   adb uninstall com.android.chrome
+
+🔹 If app already installed and you want to reinstall:
+   adb install -r appname.apk
+
+🔹 If multiple devices connected:
+   adb -s emulator-5554 install appname.apk
+
+🔹 If multiple devices connected:
+   adb -s emulator-5554 uninstall appname.apk
+
+✅ 3️⃣ Install via Appium (During Session Creation)
+options.app = "path_to_apk"
+
+✅ 1️⃣ Drag & Drop
+
+
+🧱 PHASE 3 — APPIUM CORE (NON-NEGOTIABLE):
+-----------------------------------------
+🚀 Topic 1: Driver Lifecycle (Notes)
+1️⃣ Session Creation
+webdriver.Remote() connects to Appium Server
+Desired Capabilities are sent
+Appium selects driver (UiAutomator2)
+UiAutomator2 server APK installed (if needed)
+Session ID is generated
+Session becomes ACTIVE
+
+2️⃣ Command Execution Phase
+All commands run under same Session ID
+Example: find_element, click, send_keys
+
+Commands travel:
+Python → Appium Server → UiAutomator2 → Device
+
+3️⃣ new_command_timeout
+Defined in capabilities
+Example: new_command_timeout = 300
+If no command sent for 300 seconds
+Appium Server automatically kills session
+Next command → invalid session id
+
+Timer runs in: Appium Server
+4️⃣ Normal Session Termination
+When driver.quit() is called:
+Appium sends DELETE /session
+Stops UiAutomator2 server
+Cleans port forwarding
+Frees resources
+Session destroyed successfully
+
+5️⃣ Abnormal Termination
+Session can die due to:
+App crash
+Emulator disconnect
+ADB crash
+Appium server stopped
+Timeout
+Error seen: invalid session id
+
+🚀 Topic 2: Desired Capabilities (Deep Understanding)
+1️⃣ What Are Desired Capabilities?
+
+They are:
+
+👉 Configuration settings
+👉 Sent during session creation
+👉 Tell Appium how to start automation
+
+They are sent only once — during webdriver.Remote().
+
+2️⃣ Types of Capabilities
+🔹 Mandatory (Basic)
+platformName
+deviceName
+automationName
+Without these → session won’t start.
+
+🔹 App Related
+app (path to APK)
+appPackage
+appActivity
+Tells which app to launch.
+
+🔹 Reset Behavior
+noReset
+fullReset
+
+Controls app data behavior.
+🔹 Stability & Timeout
+newCommandTimeout
+autoGrantPermissions
+Improves stability.
+
+3️⃣ When Are Capabilities Used?
+Only during:
+POST /session
+After session is created →
+Capabilities cannot be changed.
+If you want to change capability →
+You must create new session.
+
+4️⃣ How They Travel
+Options object
+→ Converted to JSON
+→ Sent to Appium Server
+→ Driver reads them
+→ Driver configures device
+
+🚀 UiAutomator2 Internal Working (Deep)
+Very important. Most people don’t understand this properly.
+
+📒 UiAutomator2 — Internal Flow Notes
+1️⃣ What is UiAutomator2?
+
+👉 Android automation engine
+👉 Built into Android framework
+👉 Appium uses it to control Android apps
+
+Appium does NOT control device directly.
+UiAutomator2 does.
+
+2️⃣ What Happens During Session Creation?
+When session starts:
+1️⃣ Appium installs:
+uiautomator2-server.apk
+uiautomator2-server-test.apk
+2️⃣ Appium starts Android instrumentation
+3️⃣ UiAutomator2 server runs inside device
+4️⃣ Appium forwards a port using ADB
+5️⃣ Communication starts between:
+Appium Server ↔ UiAutomator2 Server
+3️⃣ Command Execution Flow
+When you write:
+driver.find_element().click()
+
+Flow:
+
+Python
+→ Appium Server
+→ UiAutomator2 Driver
+→ UiAutomator2 Server (on device)
+→ Android Framework
+→ App UI
+Response travels back same path.
+
+4️⃣ Why UiAutomator2 Is Important?
+Supports Android 5+
+More stable than old UiAutomator1
+Supports modern Android features
+Handles parallel execution (with systemPort)
+5️⃣ What If UiAutomator2 Server Crashes?
+Then:
+Session becomes invalid
+You get invalid session id
+Need new session
+
+🚀 Topic 5: Session Crash & Recovery Handling
+
+This is real project knowledge. Very important.
+📒 1️⃣ What is Session Crash?
+Session crash means:
+👉 Appium session becomes invalid
+👉 Session ID no longer usable
+👉 Commands start failing
+
+Error usually seen:
+invalid session id
+
+📒 2️⃣ What Can Kill a Session?
+🔹 App Crash
+If app crashes → UiAutomator2 loses connection → session dies.
+🔹 Emulator Disconnect
+If emulator closes → ADB disconnects → session dies.
+🔹 ADB Restart
+If someone runs:
+adb kill-server
+Session dies.
+
+🔹 Appium Server Stopped
+If you close CMD → all sessions die.
+🔹 newCommandTimeout
+If no command for X seconds → server kills session.
+🔹 UiAutomator2 Crash
+If automation engine crashes inside device → session invalid.
+📒 3️⃣ What Happens After Crash?
+Driver object still exists in Python
+But session ID is invalid
+Any next command → throws error
+Example:
+driver.find_element()
+→ invalid session id
+
+📒 4️⃣ How Engineers Handle This?
+
+In real frameworks:
+✔ Proper logging
+✔ Retry mechanism
+✔ Recreate driver session if needed
+✔ Fail test cleanly (don’t hang)
+
+📒 5️⃣ Interview Important Point
+Session is controlled by:
+👉 Appium Server
+Client cannot recover dead session.
+Must create new session.
+
+🚀 Topic 6: Parallel Execution (Very Important)
+This is real engineer-level topic.
+
+📒 1️⃣ What is Parallel Execution?
+Running multiple tests at the same time
+On:
+Multiple emulators
+Multiple real devices
+To reduce execution time.
+
+📒 2️⃣ Problem in Android Parallel
+Default:
+👉 UiAutomator2 uses a default port (systemPort)
+If 2 sessions try to use same port:
+❌ Port conflict
+❌ Session creation fails
+Error like:
+Address already in use
+
+📒 3️⃣ What is systemPort?
+Each Android session must have:
+👉 Unique systemPort
+Example:
+Device 1 → systemPort = 8200
+Device 2 → systemPort = 8201
+Without unique systemPort → parallel fails.
+
+📒 4️⃣ How It Works Internally
+Appium:
+1️⃣ Uses ADB port forwarding
+2️⃣ Connects Appium server to UiAutomator2 server
+3️⃣ Uses systemPort for communication
+If ports clash → communication breaks.
+
+📒 5️⃣ Real Framework Practice
+In advanced frameworks:
+✔ Dynamically assign systemPort
+✔ Map deviceName + port
+✔ Use pytest-xdist for parallel
+
+📒 6️⃣ Interview Question
+Why does Android parallel require systemPort but iOS doesn’t?
+Answer:
+Because UiAutomator2 requires separate communication ports.
+
+🚀 Topic 7: WebView / Hybrid App Context Handling
+Very important if you test hybrid apps.
+
+📒 1️⃣ What is Hybrid App?
+Hybrid app =
+👉 Native screens +
+👉 WebView screens (HTML + CSS + JS inside app)
+Example:
+Login → Native
+Payment page → WebView
+
+📒 2️⃣ What is Context?
+Appium works in different contexts:
+Default context:
+NATIVE_APP
+If app contains WebView:
+You will also see:
+WEBVIEW_com.package.name
+
+📒 3️⃣ How It Works Internally
+When session starts:
+👉 Appium starts in NATIVE_APP
+If WebView loads:
+👉 Appium detects WebView
+👉 Uses Chromedriver internally
+👉 Creates WebView context
+
+📒 4️⃣ How Engineers Handle It
+Steps:
+1️⃣ Get available contexts
+2️⃣ Switch to WebView context
+3️⃣ Perform web automation
+4️⃣ Switch back to native
+
+📒 5️⃣ Important Capabilities
+Sometimes need:
+Correct Chromedriver version
+WebView debugging enabled
+If versions mismatch → session fails.
+
+📒 6️⃣ Interview Questions
+What is context in Appium?
+Difference between context and activity?
+Why do we need Chromedriver in hybrid apps?
+How to switch back to native?
+
+
+🚀 Phase 4 — Locators Deep Dive (Most Practical & Important)
+
+Xpath using ancestor - (//com.horcrux.svg.SvgView/ancestor::android.view.ViewGroup[@clickable="true"])[2]
+Xpath using parent - //com.horcrux.svg.SvgView/parent::android.view.ViewGroup     ( Goes one level up )
+Xpath using following or preceding sibling -
+                    //android.widget.TextView[@text="or, continue with"]/following-sibling::android.view.ViewGroup
+                    //android.widget.TextView[@text="or, continue with"]/preceding-sibling::android.view.ViewGroup
+Same parent → following-sibling::
+Different parent / nested → following::
+
+new UiSelector() supports many attributes.
+Most useful ones:
+✔ text()
+✔ textContains()
+✔ textStartsWith()
+✔ resourceId()
+✔ className()
+✔ description() (content-desc)
+✔ clickable(true)
+✔ enabled(true)
+✔ index() (avoid mostly)
+✔ instance() (last option
+
+Wait Statements in Appium:
+-------------------------
+✅ 1. visibility_of_element_located - Element is visible on screen 👉 Most common in mobile
+✅ 2. presence_of_element_located - Element exists in DOM (may not be visible)
+✅ 3. element_to_be_clickable    - Visible + enabled
+✅ 4. invisibility_of_element    - Wait until element disappears (like loader)
+
+For WebElement state checks, mainly:
+👉 is_displayed()   - Checks if element is visible on screen.
+👉 is_enabled()     - Checks if element is clickable / enabled.
+👉 is_selected()    - Used for checkbox / radio button.
+1️⃣ element.text     - title = driver.find_element(AppiumBy.ID, "title_id")
+                      assert title.text == "Login or create an account"
+2️⃣ get_attribute("checked")  -  checkbox = driver.find_element(AppiumBy.ID, "terms_checkbox")
+                                assert checkbox.get_attribute("checked") == "true"
+3️⃣ get_attribute("content-desc")
+4️⃣ Activity / Package Validation
+
+🔹 Pure App Lifecycle States Handling (Core)
+It is the different states an app goes through while running on a mobile device.
+
+🔹 Why we must handle it?
+👉 App does not stay in one state.
+👉 User actions + OS events change state anytime.
+👉 If automation doesn’t handle state change → test fails.
+👉 Lifecycle handling = stability + real-world simulation.
+
+Main states:
+1️⃣ App launch
+2️⃣ App in foreground
+3️⃣ Permission / popup (Paused)
+4️⃣ App in background
+5️⃣ App killed / crash
+
+1️⃣ App Launch
+🔹 What is it?
+Starting the app process and bringing it to foreground active state.
+In App Launch handling, we must consider:
+    👉 Cold start
+2️⃣ App in foreground  👉 Warm start
+3️⃣ Permission / popup (Paused) - Handeled
+4️⃣ App in background          - Handeled
+5️⃣ App killed / crash         - Handeled
+
+Next block would move into:
+5️⃣ Permissions & System Interruptions   ( This is separate lifecycle test )   - Handeled
+🔹 What are they?
+External OS events that temporarily pause your app:
+But full list of possible interruptions:
+1️⃣ Notification panel
+2️⃣ Incoming call
+3️⃣ SMS popup
+4️⃣ Low battery alert
+5️⃣ Permission popup (already done)
+6️⃣ App switch (recent apps)
+
+
+BOTH
+6️⃣ App Crash & ANR ( Application Not Responding ) (Very Important): ( Later we automate via pytest hook.)
+In pytest + Appium, when a condition fails and you want to stop the test immediately, you can:
+👉 Use assert
+OR
+👉 raise AssertionError
+Both mark the test as FAILED and stop execution.
+👉 Screenshot on crash
+👉 Capture logcat
+👉 Auto-run detector via pytest hook
+👉 Retry strategy integration
+But core part → Done 💪🚀
+7️⃣ Logcat & Logs (Very Important for Debugging):
+        🧱 Handeled while building frameworks:
+
+
+8️⃣ Network Behavior (WiFi / Offline / Slow Internet):   - Handeled ( Advanced pending )
+        🧱 Handeled while building frameworks:
+   1️⃣ WiFi OFF / ON
+   2️⃣ Offline handling in app
+   3️⃣ Network drop mid-flow
+   4️⃣ Slow internet simulation (basic)
+
+
+9️⃣ OS Fragmentation & Screen Sizes (Very Important in Mobile):   - Handeled
+✔ Run same flow on different Android versions
+✔ Run on small / medium / large screens
+✔ Make automation device-agnostic (scroll, waits, popup handling)
+
+
+1️⃣0️⃣ Deep Links (Very Useful in Automation):    - ( Advanced pending )   - Deep Link not provided by DEV
+In QA mobile automation, Deep Link = open a specific screen directly inside the app without normal navigation 👍
+
+1️⃣2️⃣ Background Services & Notifications:   - Handeled
+
+
+Pytest Hooks:
+------------
+1. Special functions that run automatically before/after tests without calling manually.
+2.Yes bro ✅ — hooks go inside conftest.py.
+👉 Because:
+• Pytest auto-detects hooks there
+• Applies to all tests
+• No import needed
+3.Core lifecycle = basic hooks needed 👍
+        ✅ Background → foreground recovery (very important)
+    Appium defines 5 possible states
+    driver.query_app_state(package) returns number showing app state
+    States:
+
+    • 0 → Not installed
+    • 1 → Not running
+    • 2 → Running in background (suspended)
+    • 3 → Running in background
+    • 4 → Running in foreground ✅
+4.Logcat & Logs (Very Important for Debugging):   ( Advanced Pending )
+    Record always → store only on failure ✅    - Debugging from myside pending
+
+5.8️⃣ Network Behavior (WiFi / Offline / Slow Internet):
+        skip advanced network automation for now
+
+6.1️⃣2️⃣ Background Services & Notifications:
+        Advanced level means
+
+App launch stability ✔ Done
+Crash / ANR check ✔ Done
+Background recovery ✔ Done
+Permission handling ✔ Done
+Network reset ✔ Basic done
+👉 Core lifecycle = completed (intermediate level) 👍
+OS fragmentation / screen sizes ✔ Basic done
+Background services & notifications ✔ Basic done
+Network handling (separate tests) ✔ Basic done
+
+Framework Maturity
+Screenshot on failure ❌ Pending 👉 Allure log attachment ❌ Pending
+Log collection ❌ Pending        👉 Allure log attachment ❌ Pending
+Retry failed tests ❌ Pending    👉 implement later when you see flaky failures
+Test data cleanup ❌ Pending     👉 For now → skip cleanup ✔
+Environment setup (dev/stage) ❌ Pending 👍 Implement later
+Reporting (Allure attachments) ✔ Basic done
+
+💪🚀 Advanced (Later):
+Automatic network simulation ❌
+Notification automation / deep links ❌
+Parallel execution ❌
+Device farm testing ❌
+Smart retry / self-healing ❌
+AI locators ❌ 👍
+
+Reporting (Allure attachments) - Complete Allure Report Flow:
+------------------------------------------------------------
+Setup:
+pip install allure-pytest
+Allure commandline tool ---  npm install -g allure-commandline --save-dev
+
+run =         pytest  tests/test_login.py --alluredir=allure_results
+report =      allure serve allure_results
+Run single test method   - pytest tests/test_login.py::TestLogin::test_valid_login --alluredir=allure-results
+
+⭐ Level 1 (Most important)
+Screenshot on failure auto attach    - Mandatory Done
+Log file attachment                  - Mandatory Done
+Page source attachment               - Mandatory Done
+Video attachment (optional later)    - Optional
+⭐ Level 2 (Test structuring)
+Allure steps (@allure.step)
+Test metadata
+severity
+story
+feature
+epic
+Dynamic test title                   - All Mandatory ( AT last )
+⭐ Level 3 (Debugging power)
+Attach API request / response
+Custom failure message attachment    - Later ( POM )
+Attach device info / capabilities    - Done
+⭐ Level 4 (Advanced reporting maturity)
+Environment.properties (dev/stage info)    - Done
+Categories.json (failure grouping)        -  Done
+History trend (flaky tracking)            -  Later
+Retry integration with Allure             -  Later
+⭐ Level 5 (Senior level — later)
+Automatic attachment decorator           - Done
+Framework-level step wrapper             - Later
+Correlation ID / trace logs in Allure    - Later
+Video recording integration              - Optional
+
+Virtual audio cable for voice automation:
+----------------------------------------
+1. Audio played on laptop / emulator
+→ goes to CABLE Input
+→ routed internally
+→ comes as microphone input (CABLE Output)
+→ emulator app receives it as mic input
+
+Install VB-Audio Virtual Cable ( zip file )   -  Need real device Pending
+-------------------------------------------
+
+Top Test Execution Frameworks
+Pytest    - Python
+TestNG
+JUnit
+Mocha
+Robot Framework   - Python
+
+Top Design Frameworks / Patterns   ( All Python )
+Page Object Model (POM)      -
+Data Driven Framework        - Use when Data needs to be called from json ( recommended )
+Keyword Driven Framework   - Used by robot framework
+Hybrid Framework           - current implementation
+BDD Framework  - Yes (using tools like Behave)
+
+CICD IMPLEMENTATION:
+-------------------
