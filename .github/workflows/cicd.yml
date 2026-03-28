@@ -99,10 +99,16 @@ jobs:
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
 
-        # ✅ Install App (Android)
+      # ✅ Download APK
       - name: Install App (Android)
         if: matrix.device == 'android'
-        run: adb install apps/android_app.apk
+        run: |
+            wget https://github.com/ranjangowda123/mobile-automation-framework-appium-python/releases/download/v1/android_app.apk
+
+      # ✅ Install App (Android)
+      - name: Install App (Android)
+        if: matrix.device == 'android'
+        run: adb install android_app.apk
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator

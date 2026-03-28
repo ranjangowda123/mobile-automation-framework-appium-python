@@ -213,3 +213,4 @@ __marimo__/
 # Results
 allure-results/
 temp_logs/
+apps/android_app.apk
