@@ -26,7 +26,7 @@ jobs:
       matrix:
         device: [android]
 
-    if: github.event_name == 'push' || github.event.inputs.device == 'both' ||
+    if: github.event_name == 'push' || github.event.inputs.device == 'both'
 
     env:
       PYTHONUNBUFFERED: 1
