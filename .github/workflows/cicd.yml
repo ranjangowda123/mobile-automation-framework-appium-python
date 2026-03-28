@@ -71,7 +71,7 @@ jobs:
         if: matrix.device == 'android'
         run: |
           sdkmanager "system-images;android-30;google_apis;x86_64"
-          avdmanager create avd -n emulator -k "system-images;android-30;google_apis;x86_64" --force
+          echo "no" | avdmanager create avd -n emulator -k "system-images;android-30;google_apis;x86_64" --force
 
       - name: Start Emulator
         if: matrix.device == 'android'
