@@ -88,13 +88,13 @@ jobs:
         run: |
           boot_completed=""
           until [[ "$boot_completed" == "1" ]]; do
-            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")
             echo "Waiting for emulator to boot..."
             sleep 5
           done
           adb shell input keyevent 82
-
-      # 🔥 Disable animations (reduce flakiness)
+      
+          # 🔥 Disable animations (reduce flakiness)
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
