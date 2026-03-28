@@ -54,8 +54,8 @@ jobs:
       # ✅ Appium setup
       - name: Install Appium + Drivers
         run: |
-          npm install -g appium
-          appium driver install uiautomator2
+          npm install -g appium@2
+          appium driver install uiautomator2@2.30.0
 
       - name: Install iOS Driver
         if: matrix.device == 'ios'
