@@ -40,7 +40,7 @@ class SpeakingWritingPage:
                 elements = self.driver.find_elements(*self.mic_stop_locator_length)
                 print("Found:", len(elements))
                 if elements:
-                    mic_stop = self.driver.find_element
+                    mic_stop = elements[0]
                     safe_gesture_click(self.driver, mic_stop)
                     print("clicked.........................")
                     break
@@ -48,10 +48,9 @@ class SpeakingWritingPage:
                 continue
 
     def click_on_submit(self):
-        submit_locator = self.driver(*self.submit_button)
         try:
-            submit_button = wait_for_clickable(self.driver, submit_locator)
+            submit_button = wait_for_clickable(self.driver, self.submit_button)
         except TimeoutException:
             scroll_to_description(self.driver,self.submit_button)
-            submit_button = wait_for_clickable(self.driver, submit_locator)
+            submit_button = wait_for_clickable(self.driver, self.submit_button)
         submit_button.click()

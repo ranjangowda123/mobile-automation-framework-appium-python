@@ -11,7 +11,7 @@ class ProfileDetailsPage:
     last_name = (AppiumBy.XPATH, '//android.widget.TextView[@text="Last name"]/following-sibling::android.widget.EditText[1]')
     click_on_calender = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().className("android.widget.ImageView")')
     wait_for_calender_visible = (AppiumBy.ID, "android:id/date_picker_header_year")
-    choose_date = (AppiumBy.ACCESSIBILITY_ID, "13 February 2026")
+    choose_date = (AppiumBy.ACCESSIBILITY_ID, "24 March 2026")
     confirm_date = (AppiumBy.ID, "android:id/button1")
     language = (AppiumBy.XPATH,'//android.widget.TextView[@text="Your native language"]/following-sibling::android.widget.EditText[1]')
     next_button = (AppiumBy.ACCESSIBILITY_ID, "Next")

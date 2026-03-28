@@ -605,6 +605,26 @@ Xpath using following or preceding sibling -
                     //android.widget.TextView[@text="or, continue with"]/preceding-sibling::android.view.ViewGroup
 Same parent → following-sibling::
 Different parent / nested → following::
+-------------------------------------------------------------------------------------------------------------
+xpath with Parent: Parent (⬆️ one level)
+    //android.widget.TextView[@text='Username']/..            OR
+    //android.widget.TextView[@text='Username']/parent::android.view.ViewGroup
+
+xpat with Ancestor: Ancestor (⬆️ multiple levels)
+    //android.widget.TextView[@text='Username']/ancestor::android.view.ViewGroup
+
+xpath with Child: 👉 From Parent → direct children, Child (⬇️ one level)
+    //android.view.ViewGroup/child::android.widget.TextView    OR
+    / → direct child only ✅
+
+xpath with Descendant:
+    //android.view.ViewGroup/descendant::android.widget.TextView   OR
+    // → any level (child + grandchild + deeper) ✅
+
+5️⃣ Following-Sibling (➡️ next same level)
+6️⃣ Preceding-Sibling (⬅️ previous same level)
+
+--------------------------------------------------------------------------------------------------------------
 
 new UiSelector() supports many attributes.
 Most useful ones:
@@ -772,8 +792,8 @@ Setup:
 pip install allure-pytest
 Allure commandline tool ---  npm install -g allure-commandline --save-dev
 
-run =         pytest  tests/test_login.py --alluredir=allure_results
-report =      allure serve allure_results
+run =         pytest  tests/test_login.py --alluredir=allure-results
+report =      allure serve allure-results
 Run single test method   - pytest tests/test_login.py::TestLogin::test_valid_login --alluredir=allure-results
 
 ⭐ Level 1 (Most important)
@@ -831,3 +851,11 @@ BDD Framework  - Yes (using tools like Behave)
 
 CICD IMPLEMENTATION:
 -------------------
+Github Actions:
+    Steps:
+        1. 👉 Your GitHub repo should have: requirements.txt (very important)
+        2. create this folder: .github/workflows/ci.yml    - Root level
+        3. add yml file
+        4. 🌐 Allure report viewing → use GitHub Pages ✅
+           📄 Logs / Screenshots / raw data → use Artifacts ✅
+        5.

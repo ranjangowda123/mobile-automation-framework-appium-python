@@ -23,5 +23,6 @@ class HomePage:
         self.driver.find_element(*self.home_button).click()
 
     def verify_new_registration(self):
+        wait_for_visibility(self.driver,self.verify_home_page)
         home_page = self.driver.find_element(*self.verify_home_page).text
         assert "Let's start your learning journey" in home_page

@@ -2,26 +2,31 @@
   {
     "name": "Assertion Failures",
     "matchedStatuses": ["failed"],
-    "messageRegex": ".*AssertionError.*"
+    "traceRegex": ".*AssertionError.*"
   },
   {
     "name": "Locator Issue",
-    "messageRegex": ".*NoSuchElementException.*|.*TimeoutException.*"
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*NoSuchElementException.*|.*TimeoutException.*"
   },
   {
     "name": "App Crash / ANR",
-    "messageRegex": ".*crash.*|.*ANR.*|.*Process .* has stopped.*"
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*crash.*|.*ANR.*|.*Process .* has stopped.*"
   },
   {
     "name": "Network Issues",
-    "messageRegex": ".*SocketTimeout.*|.*Connection.*failed.*|.*Network.*"
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*SocketTimeout.*|.*Connection.*failed.*|.*Network.*"
   },
   {
     "name": "Permission / Device Issue",
-    "messageRegex": ".*permission.*denied.*|.*device.*offline.*"
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*permission.*denied.*|.*device.*offline.*"
   },
   {
     "name": "Appium / Session Issue",
-    "messageRegex": ".*SessionNotCreated.*|.*WebDriverException.*|.*session.*not.*found.*"
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*SessionNotCreated.*|.*WebDriverException.*|.*session.*not.*found.*"
   }
 ]

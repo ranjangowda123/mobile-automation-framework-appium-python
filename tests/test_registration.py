@@ -22,17 +22,18 @@ class TestRegister:
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("New user registration flow")
     @allure.description("Verify that a new user can successfully register and reach the home page after completing diagnostic test flow.")
-    @pytest.mark.parametrize("user",data["Users"][0])
+    @pytest.mark.parametrize("user",[data["users"][0]],
+                             ids=[data["users"][0]["email"]])
     @pytest.mark.regression
-    def test_login(self,driver,user):
+    def test_signup(self,driver,user):
 
         email = user['email']
         allure.dynamic.parameter("email",email)
-        profile = data['profile_details']
+        profile = user['profile_details']
         firstname = profile['fname']
         lastname = profile['lname']
         language = profile['language']
-        score = data['score']
+        score = user['score']
 
         account_creation_page = AccountCreationPage(driver)
         profile_details_page = ProfileDetailsPage(driver)
@@ -48,7 +49,7 @@ class TestRegister:
             account_creation_page.click_on_google_button()
             account_creation_page.wait_for_choose_account_popup()
             account_creation_page.choose_email_for_registration(email)
-            account_creation_page.wait_for_choose_account_popup()
+            account_creation_page.wait_for_account_creation_page()
 
         with allure.step("Enter profile details"):
             profile_details_page.enter_first_name(firstname)
@@ -72,26 +73,25 @@ class TestRegister:
             personalize_page.click_on_continue_button()
 
         with allure.step("Start diagnostic test"):
-            diagnostic_page.wait_for_diagnostic_test_page()
+            diagnostic_page.wait_for_quick_diagnostic_test_page()
             diagnostic_page.click_on_speak_and_write()
             diagnostic_page.wait_for_diagnostic_write_page()
-            diagnostic_page.enter_answers()
-            profile_details_page.click_on_next_button()
+            diagnostic_page.enter_answers(profile_details_page)
+
 
         with allure.step("Complete speaking section"):
             diagnostic_page.wait_for_diagnostic_speaking()
-            diagnostic_page.wait_for_diagnostic_test_page()
             speak_and_write.start_mic()
             speak_and_write.mic_stop()
             speak_and_write.click_on_submit()
 
         with allure.step("Complete reading section"):
-            diagnostic_page.wait_for_diagnostic_test_page()
+            diagnostic_page.wait_for_quick_diagnostic_test_page()
             reading_page.click_on_reading()
             reading_page.start_reading_section()
 
         with allure.step("Complete listening section"):
-            diagnostic_page.wait_for_diagnostic_test_page()
+            diagnostic_page.wait_for_quick_diagnostic_test_page()
             listen_page.click_on_listen()
             listen_page.wait_for_listening_screen()
             listen_page.start_listening_section()

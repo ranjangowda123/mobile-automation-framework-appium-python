@@ -6,5 +6,6 @@ def scroll_to_text(driver,text):
         f'new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("{text}"))')
 
 def scroll_to_description(driver,desc):
+    value = desc[1]
     driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
-        f'new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().description("{desc}"))')
+        f'new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().description("{value}"))')
