@@ -81,7 +81,8 @@ jobs:
             system-images;android-30;google_apis;x86_64
 
       - name: Accept Licenses Manually
-        run: yes | sdkmanager --licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Add Emulator to PATH
         run: |
