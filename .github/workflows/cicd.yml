@@ -80,7 +80,7 @@ jobs:
         env:
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
-          yes | sdkmanager --licenses || true
+          for i in {1..10}; do yes | sdkmanager --licenses; done
 
       - name: Add Emulator to PATH
         run: |
