@@ -63,12 +63,11 @@ jobs:
           appium driver install xcuitest
 
       # ✅ ANDROID FLOW
-
-      - name: Setup Java 11
+      - name: Setup Java 17 (for Android setup)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Setup Android SDK
         if: matrix.device == 'android'
@@ -84,6 +83,7 @@ jobs:
       - name: Create Emulator
         if: matrix.device == 'android'
         run: |
+          export SKIP_JDK_VERSION_CHECK=true
           sdkmanager "system-images;android-30;google_apis;x86_64"
           echo "no" | avdmanager create avd -n emulator -k "system-images;android-30;google_apis;x86_64" --force
 
