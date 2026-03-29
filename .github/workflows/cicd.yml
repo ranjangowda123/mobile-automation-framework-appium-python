@@ -63,11 +63,11 @@ jobs:
           appium driver install xcuitest
 
       # ✅ ANDROID FLOW
-      - name: Setup Java 17 (for Android setup)
+      - name: Setup Java 11 (for Android setup)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11 '
 
       - name: Setup Android SDK
         if: matrix.device == 'android'
