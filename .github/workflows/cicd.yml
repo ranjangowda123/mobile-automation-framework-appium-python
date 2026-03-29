@@ -94,11 +94,11 @@ jobs:
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
       # 🔥 SWITCH TO JAVA 11 HERE
-      - name: Setup Java 11 (for AVD)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
+      - name: Force Java 11 for AVD
+        run: |
+          export JAVA_HOME=$JAVA_HOME_11_X64
+          export PATH=$JAVA_HOME/bin:$PATH
+          java -version
 
       - name: Create Emulator
         if: matrix.device == 'android'
