@@ -74,11 +74,7 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: true
-          packages: |
-            platform-tools
-            emulator
-            platforms;android-30
-            system-images;android-30;google_apis;x86_64
+          packages: platform-tools,emulator,platforms;android-30,system-images;android-30;google_apis;x86_64
 
       - name: Add Emulator to PATH
         run: |
