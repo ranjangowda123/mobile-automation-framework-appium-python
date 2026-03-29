@@ -80,10 +80,6 @@ jobs:
             platforms;android-30
             system-images;android-30;google_apis;x86_64
 
-      - name: Accept Licenses Manually
-        run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-
       - name: Add Emulator to PATH
         run: |
           echo "$ANDROID_HOME/emulator" >> $GITHUB_PATH
