@@ -76,6 +76,10 @@ jobs:
           accept-android-sdk-licenses: true
           packages: platform-tools,emulator,platforms;android-30,system-images;android-30;google_apis;x86_64
 
+      - name: Force Accept Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager --licenses
+
       - name: Add Emulator to PATH
         run: |
           echo "$ANDROID_HOME/emulator" >> $GITHUB_PATH
