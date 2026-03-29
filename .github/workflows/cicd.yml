@@ -74,7 +74,11 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: false
-          packages: platform-tools,emulator,platforms;android-30,system-images;android-30;google_apis;x86_64
+          packages: |
+            platform-tools
+            emulator
+            platforms;android-30
+            system-images;android-30;google_apis;x86_64
 
       - name: Accept Android Licenses (FINAL FIX)
         run: yes | /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses
