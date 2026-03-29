@@ -77,8 +77,10 @@ jobs:
           packages: platform-tools,emulator,platforms;android-30,system-images;android-30;google_apis;x86_64
 
       - name: Force Accept Licenses
+        env:
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager --licenses
+          yes | sdkmanager --licenses || true
 
       - name: Add Emulator to PATH
         run: |
