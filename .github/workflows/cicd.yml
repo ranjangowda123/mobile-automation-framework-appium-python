@@ -104,34 +104,7 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off
           disable-animations: true
           script: |
-            echo "Restarting ADB..."
-            adb kill-server || true
-            adb start-server || true
-      
-            echo "Waiting for device..."
             adb wait-for-device
-            
-            adb reconnect
-            adb devices
-            
-            echo "Fixing offline issue..."
-      
-            for i in {1..30}; do
-              adb shell echo "ready" && break
-              echo "Retry adb..."
-              sleep 5
-            done
-      
-            echo "Waiting for boot..."
-      
-            boot_completed=""
-            until [[ "$boot_completed" == "1" ]]; do
-              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              sleep 5
-            done
-      
-            echo "Emulator fully ready"
-      
             adb shell input keyevent 82
       
             adb shell settings put global window_animation_scale 0
@@ -139,7 +112,7 @@ jobs:
             adb shell settings put global animator_duration_scale 0
 
       # ✅ Download APK
-      - name: Install App (Android)
+      - name: Download App (Android)
         if: matrix.device == 'android'
         run: |
             wget https://github.com/ranjangowda123/mobile-automation-framework-appium-python/releases/download/v1/android_app.apk
