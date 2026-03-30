@@ -76,8 +76,8 @@ jobs:
         with:
           accept-android-sdk-licenses: false
 
-      - name: Accept Android Licenses (FINAL FIX)
-        run: yes | /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses
+      - name: Accept Android Licenses
+        run: yes | sdkmanager --licenses
 
       - name: Install Android Packages
         run: |
@@ -93,16 +93,8 @@ jobs:
           echo "$ANDROID_HOME/tools/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
-      - name: Fix JAXB issue
-        run: |
-          export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64
-          sudo apt-get update
-          sudo apt-get install -y openjdk-8-jdk
-
       - name: Create AVD
         run: |
-          export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-          export PATH=$JAVA_HOME/bin:$PATH 
           echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
 
       - name: Start Emulator
