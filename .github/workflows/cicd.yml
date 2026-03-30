@@ -147,7 +147,7 @@ jobs:
             -accel off \
             -no-snapshot \             
             -no-snapshot-save \         
-            -no-snapshot-load > /dev/null 2>&1 &
+            -no-snapshot-load >/dev/null 2>&1 &
         
           adb wait-for-device
       
