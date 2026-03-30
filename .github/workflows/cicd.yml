@@ -93,47 +93,44 @@ jobs:
           echo "$ANDROID_HOME/tools/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
-      - name: Run Android Emulator and wait for Emulator
+      - name: Run Android Emulator
         if: matrix.device == 'android'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
-          arch: x86_64
+          api-level: 29   # 🔥 CHANGE from 30 → 29 (more stable)
+          target: default  # 🔥 CHANGE from google_apis → default
+          arch: x86
           profile: pixel
-          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off
           disable-animations: true
           script: |
-            adb kill-server
-            adb start-server
-
-            echo "Waiting for emulator..."
-
+            echo "Restarting ADB..."
+            adb kill-server || true
+            adb start-server || true
+      
+            echo "Waiting for device..."
             adb wait-for-device
-
-            echo "Fixing adb offline issue..."
-
-            adb devices
-
-            # 🔥 Retry until device is online
-            for i in {1..10}; do
-              adb shell echo "device ready" && break
-              echo "Retry adb connection..."
+      
+            echo "Fixing offline issue..."
+      
+            for i in {1..20}; do
+              adb shell echo "ready" && break
+              echo "Retry adb..."
               sleep 5
             done
-
-            echo "Waiting for full boot..."
-
+      
+            echo "Waiting for boot..."
+      
             boot_completed=""
             until [[ "$boot_completed" == "1" ]]; do
               boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               sleep 5
             done
-
-            echo "Emulator ready"
-
+      
+            echo "Emulator fully ready"
+      
             adb shell input keyevent 82
-
+      
             adb shell settings put global window_animation_scale 0
             adb shell settings put global transition_animation_scale 0
             adb shell settings put global animator_duration_scale 0
