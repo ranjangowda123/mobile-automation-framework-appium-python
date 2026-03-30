@@ -143,9 +143,9 @@ jobs:
         run: |
           nohup $ANDROID_HOME/emulator/emulator -avd test \
             -no-window -no-audio -no-boot-anim \
-            -gpu off \                  
+            -gpu off \               
             -accel off \
-            -no-snapshot \              
+            -no-snapshot \             
             -no-snapshot-save \         
             -no-snapshot-load > /dev/null 2>&1 &
         
