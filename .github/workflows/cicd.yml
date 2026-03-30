@@ -188,7 +188,12 @@ jobs:
           adb wait-for-device
           
           echo "Waiting for package manager..."
-          while [[ -z $(adb shell getprop sys.boot_completed | tr -d '\r') ]]; do
+          for i in {1..30}; do
+            boot=$(adb shell getprop sys.boot_completed | tr -d '\r')
+            if [ "$boot" = "1" ]; then
+              echo "Package manager ready"
+              break
+            fi
             sleep 2
           done
           
