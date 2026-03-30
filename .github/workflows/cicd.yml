@@ -83,8 +83,8 @@ jobs:
         run: |
           sdkmanager "platform-tools"
           sdkmanager "emulator"
-          sdkmanager "platforms;android-30"
-          sdkmanager "system-images;android-30;google_apis;x86_64"
+          sdkmanager "platforms;android-29"
+          sdkmanager "system-images;android-29;google_apis;x86_64"
 
       - name: Add Emulator to PATH
         run: |
@@ -109,7 +109,7 @@ jobs:
 
       - name: Create AVD
         run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
+          echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force
 
       - name: Start Emulator
         run: |
