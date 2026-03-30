@@ -144,17 +144,28 @@ jobs:
           adb kill-server || true
           adb start-server || true
       
+          echo "Available AVDs:"
+          emulator -list-avds
+      
           echo "Starting emulator..."
       
-          nohup $ANDROID_HOME/emulator/emulator -avd test \
+          $ANDROID_HOME/emulator/emulator -avd test \
             -no-window \
             -no-audio \
             -no-boot-anim \
             -gpu swiftshader_indirect \
             -wipe-data > emulator.log 2>&1 &
       
-          echo "Waiting for emulator process..."
-          sleep 25   # 🔥 VERY IMPORTANT
+          echo "Waiting for emulator to appear..."
+      
+          for i in {1..30}; do
+            adb devices
+            if adb devices | grep emulator; then
+              echo "Emulator detected ✅"
+              break
+            fi
+            sleep 5
+          done
       
           adb wait-for-device
       
@@ -174,14 +185,13 @@ jobs:
       
           if [ "$BOOT" != "1" ]; then
             echo "❌ Emulator failed"
-            tail -n 100 emulator.log || true
-            adb logcat -d | tail -n 100
+            echo "==== EMULATOR LOG ===="
+            cat emulator.log | tail -n 200
             exit 1
           fi
       
-          echo "Stabilizing..."
           sleep 40
-      
+            
           adb shell input keyevent 82 || true
       
           adb shell settings put global window_animation_scale 0
