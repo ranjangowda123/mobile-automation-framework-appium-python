@@ -183,10 +183,22 @@ jobs:
         run: |
             wget https://github.com/ranjangowda123/mobile-automation-framework-appium-python/releases/download/v1/android_app.apk
 
-      # ✅ Install App (Android)
       - name: Install App (Android)
-        if: matrix.device == 'android'
-        run: adb install android_app.apk
+        run: |
+          adb wait-for-device
+
+          echo "Waiting for package manager..."
+          adb shell while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done
+
+          sleep 15
+
+          adb shell input keyevent 82
+
+          for i in {1..5}; do
+            adb install android_app.apk && break
+            echo "Retrying install..."
+            sleep 10
+          done
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator
