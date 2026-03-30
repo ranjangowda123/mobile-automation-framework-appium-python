@@ -154,8 +154,13 @@ jobs:
             -no-audio \
             -no-boot-anim \
             -gpu swiftshader_indirect \
+            -no-accel
             -wipe-data > emulator.log 2>&1 &
-      
+          
+          sleep 10
+          echo "==== Emulator Log ===="
+          tail -n 50 emulator.log || true
+          
           echo "Waiting for emulator to appear..."
       
           for i in {1..30}; do
