@@ -52,7 +52,7 @@ jobs:
           node-version: '18'
 
       # ✅ Appium setup for Android
-      - name: Install Appium + Drivers
+      - name: Install Appium and Android Drivers
         run: |
           npm install -g appium@2
           appium driver install uiautomator2@2.30.0
@@ -93,8 +93,15 @@ jobs:
           echo "$ANDROID_HOME/tools/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
+      - name: Fix JAXB issue
+        run: |
+          export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk
+
       - name: Create AVD
         run: |
+          export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
           echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
 
       - name: Start Emulator
