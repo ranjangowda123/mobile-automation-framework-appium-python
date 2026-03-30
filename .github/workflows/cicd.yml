@@ -141,14 +141,14 @@ jobs:
 
       - name: Start Emulator
         run: |
-          nohup emulator -avd test \
+          nohup $ANDROID_HOME/emulator/emulator -avd test \
             -no-window -no-audio -no-boot-anim \
             -gpu off \                  # 🔥 CHANGE
             -accel off \
             -no-snapshot \              # 🔥 ADD
             -no-snapshot-save \         # 🔥 ADD
             -no-snapshot-load > /dev/null 2>&1 &
-      
+        
           adb wait-for-device
       
           adb devices
