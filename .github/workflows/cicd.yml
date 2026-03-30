@@ -112,18 +112,28 @@ jobs:
           mkdir -p ~/.android
           chmod -R 777 ~/.android
 
+      - name: Kill adb (clean state)
+        run: |
+          adb kill-server || true
+          adb start-server || true
+
       - name: Create AVD
         run: |
-          mkdir -p ~/.android/avd 
-          
+          mkdir -p ~/.android/avd
+          mkdir -p ~/.android
+
           echo "no" | avdmanager create avd \
             -n test \
             -k "system-images;android-29;google_apis;x86_64" \
             --device "pixel" \
-            --force
-            
-          echo "===== AVD LIST ====="
-          avdmanager list avd 
+            --sdcard 512M \
+            --force || true
+
+          echo "===== DEBUG AVD LIST ====="
+          avdmanager list avd || true
+
+          echo "===== DEBUG FOLDER ====="
+          ls -R ~/.android || true
 
       - name: Set AVD Path
         run: |
