@@ -107,8 +107,9 @@ jobs:
       
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
-      - name: Fix permissions
+      - name: Prepare Android Folder
         run: |
+          mkdir -p ~/.android
           chmod -R 777 ~/.android
 
       - name: Create AVD
