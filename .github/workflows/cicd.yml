@@ -110,10 +110,13 @@ jobs:
       
             echo "Waiting for device..."
             adb wait-for-device
-      
+            
+            adb reconnect
+            adb devices
+            
             echo "Fixing offline issue..."
       
-            for i in {1..20}; do
+            for i in {1..30}; do
               adb shell echo "ready" && break
               echo "Retry adb..."
               sleep 5
