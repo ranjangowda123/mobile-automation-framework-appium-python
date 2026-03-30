@@ -151,46 +151,39 @@ jobs:
             -no-audio \
             -no-boot-anim \
             -gpu swiftshader_indirect \
-            -camera-back none \
-            -camera-front none \
-            -no-snapshot \
             -wipe-data > emulator.log 2>&1 &
+      
+          echo "Waiting for emulator process..."
+          sleep 25   # 🔥 VERY IMPORTANT
       
           adb wait-for-device
       
-          echo "Waiting for Android boot..."
+          echo "Waiting for boot..."
       
-          boot_completed=""
-          bootanim=""
+          for i in {1..120}; do
+            BOOT=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            echo "boot=$BOOT"
       
-          for i in {1..150}; do
-            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-            bootanim=$(adb shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r')
-      
-            echo "boot_completed=$boot_completed | bootanim=$bootanim"
-      
-            if [ "$boot_completed" = "1" ] && [ "$bootanim" = "stopped" ]; then
-              echo "Emulator fully booted ✅"
+            if [ "$BOOT" = "1" ]; then
+              echo "Boot completed ✅"
               break
             fi
       
             sleep 5
           done
       
-          if [ "$boot_completed" != "1" ]; then
-            echo "❌ Emulator failed to boot"
-            echo "==== Emulator Logs ===="
+          if [ "$BOOT" != "1" ]; then
+            echo "❌ Emulator failed"
             tail -n 100 emulator.log || true
             adb logcat -d | tail -n 100
             exit 1
           fi
       
-          echo "Final stabilization..."
+          echo "Stabilizing..."
           sleep 40
       
           adb shell input keyevent 82 || true
       
-          echo "Disabling animations..."
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
