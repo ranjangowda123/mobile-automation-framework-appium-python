@@ -105,6 +105,12 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
           echo "$JAVA_HOME_11_X64/bin" >> $GITHUB_PATH
 
+      # Fix JAXB
+      - name: Fix JAXB issue
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libjaxb-api-java
+
       - name: Create Emulator
         if: matrix.device == 'android'
         run: |
