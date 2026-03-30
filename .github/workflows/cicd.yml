@@ -95,12 +95,15 @@ jobs:
 
       - name: Setup Latest Cmdline Tools
         run: |
-          mkdir -p $ANDROID_HOME/cmdline-tools/latest
+          rm -rf $ANDROID_HOME/cmdline-tools/latest   # 🔥 clean old
+          
+          mkdir -p $ANDROID_HOME/cmdline-tools
           cd $ANDROID_HOME/cmdline-tools
       
           curl -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip tools.zip -d latest
-          mv latest/cmdline-tools/* latest/
+          unzip tools.zip
+          
+          mv cmdline-tools latest
       
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
