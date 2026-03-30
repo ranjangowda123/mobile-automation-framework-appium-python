@@ -154,21 +154,25 @@ jobs:
             -no-audio \
             -no-boot-anim \
             -gpu swiftshader_indirect \
-            -no-accel
-            -wipe-data > emulator.log 2>&1 &
-          
-          sleep 10
+            -no-accel \
+            -no-snapshot \
+            -wipe-data \
+            -memory 1024 \
+            -cores 2 > emulator.log 2>&1 &
+      
+          sleep 20
+      
           echo "==== Emulator Log ===="
           tail -n 50 emulator.log || true
-          
+      
           echo "Waiting for emulator to appear..."
       
-          for i in {1..30}; do
-            adb devices
-            if adb devices | grep emulator; then
+          for i in {1..60}; do
+            if adb devices | grep -q "emulator"; then
               echo "Emulator detected ✅"
               break
             fi
+            echo "Waiting for emulator..."
             sleep 5
           done
       
@@ -191,12 +195,12 @@ jobs:
           if [ "$BOOT" != "1" ]; then
             echo "❌ Emulator failed"
             echo "==== EMULATOR LOG ===="
-            cat emulator.log | tail -n 200
+            tail -n 200 emulator.log
             exit 1
           fi
       
           sleep 40
-            
+      
           adb shell input keyevent 82 || true
       
           adb shell settings put global window_animation_scale 0
