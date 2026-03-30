@@ -93,7 +93,7 @@ jobs:
           echo "$ANDROID_HOME/tools/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
-      - name: Run Android Emulator
+      - name: Run Android Emulator and wait for Emulator
         if: matrix.device == 'android'
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -101,24 +101,26 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel
+          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
+          disable-animations: true
           script: |
-            echo "Emulator started"
-
-      - name: Wait for Emulator Fully Ready
-        if: matrix.device == 'android'
-        run: |
-          boot_completed=""
-          until [[ "$boot_completed" == "1" ]]; do
-            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")
-            echo "Waiting for emulator to boot..."
-            sleep 5
-          done
-          adb shell input keyevent 82
+            adb wait-for-device
       
-          # 🔥 Disable animations (reduce flakiness)
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
+            echo "Waiting for emulator to boot..."
+      
+            boot_completed=""
+            until [[ "$boot_completed" == "1" ]]; do
+              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              sleep 5
+            done
+      
+            echo "Emulator ready"
+      
+            adb shell input keyevent 82
+      
+            adb shell settings put global window_animation_scale 0
+            adb shell settings put global transition_animation_scale 0
+            adb shell settings put global animator_duration_scale 0
 
       # ✅ Download APK
       - name: Install App (Android)
