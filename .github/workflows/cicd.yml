@@ -141,41 +141,56 @@ jobs:
 
       - name: Start Emulator
         run: |
+          adb kill-server || true
+          adb start-server || true
+      
+          echo "Starting emulator..."
+      
           nohup $ANDROID_HOME/emulator/emulator -avd test \
             -no-window \
             -no-audio \
             -no-boot-anim \
             -gpu swiftshader_indirect \
+            -camera-back none \
+            -camera-front none \
             -no-snapshot \
-            -no-snapshot-save \
-            -no-snapshot-load > /dev/null 2>&1 &
-  
+            -wipe-data > emulator.log 2>&1 &
+      
           adb wait-for-device
-          
-          echo "Waiting for full boot..."
-          boot_completed="0"
-          
-          for i in {1..120}; do
+      
+          echo "Waiting for Android boot..."
+      
+          boot_completed=""
+          bootanim=""
+      
+          for i in {1..150}; do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-          
-            if [ "$boot_completed" = "1" ]; then
-              echo "Emulator booted!"
+            bootanim=$(adb shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r')
+      
+            echo "boot_completed=$boot_completed | bootanim=$bootanim"
+      
+            if [ "$boot_completed" = "1" ] && [ "$bootanim" = "stopped" ]; then
+              echo "Emulator fully booted ✅"
               break
             fi
-          
+      
             sleep 5
           done
-          
+      
           if [ "$boot_completed" != "1" ]; then
-            echo "Emulator failed to boot"
-            adb logcat -d | tail -n 50
+            echo "❌ Emulator failed to boot"
+            echo "==== Emulator Logs ===="
+            tail -n 100 emulator.log || true
+            adb logcat -d | tail -n 100
             exit 1
           fi
-          
-          sleep 30
-          adb shell input keyevent 82
       
-          # Disable animations
+          echo "Final stabilization..."
+          sleep 40
+      
+          adb shell input keyevent 82 || true
+      
+          echo "Disabling animations..."
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
