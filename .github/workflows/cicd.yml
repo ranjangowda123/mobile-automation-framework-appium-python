@@ -102,6 +102,7 @@ jobs:
       - name: Create AVD
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH 
           echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
 
       - name: Start Emulator
@@ -112,6 +113,7 @@ jobs:
       
           adb wait-for-device
           adb shell settings put global adb_enabled 1
+          adb devices
           
           echo "Waiting for full boot..."
           until adb shell getprop sys.boot_completed | grep -m 1 '1'; do
