@@ -107,13 +107,22 @@ jobs:
       
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
+      - name: Fix permissions
+        run: |
+          chmod -R 777 ~/.android
+
       - name: Create AVD
         run: |
           mkdir -p ~/.android/avd 
+          
           echo "no" | avdmanager create avd \
-          -n test -k "system-images;android-29;google_apis;x86_64" \
-          --force
-           avdmanager list avd
+            -n test \
+            -k "system-images;android-29;google_apis;x86_64" \
+            --device "pixel" \
+            --force
+            
+          echo "===== AVD LIST ====="
+          avdmanager list avd 
 
       - name: Set AVD Path
         run: |
