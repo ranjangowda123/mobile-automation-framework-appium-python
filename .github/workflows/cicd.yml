@@ -142,34 +142,37 @@ jobs:
       - name: Start Emulator
         run: |
           nohup $ANDROID_HOME/emulator/emulator -avd test \
-            -no-window -no-audio -no-boot-anim \
-            -gpu off \
-            -accel off \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -gpu swiftshader_indirect \
             -no-snapshot \
             -no-snapshot-save \
-            -no-snapshot-load >/dev/null 2>&1 &
-        
+            -no-snapshot-load > /dev/null 2>&1 &
+  
           adb wait-for-device
-      
-          adb devices
-      
+          
           echo "Waiting for full boot..."
           boot_completed="0"
-          for i in {1..60}; do
+          
+          for i in {1..120}; do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+          
             if [ "$boot_completed" = "1" ]; then
               echo "Emulator booted!"
               break
             fi
+          
             sleep 5
           done
-      
+          
           if [ "$boot_completed" != "1" ]; then
             echo "Emulator failed to boot"
             adb logcat -d | tail -n 50
             exit 1
           fi
-      
+          
+          sleep 30
           adb shell input keyevent 82
       
           # Disable animations
