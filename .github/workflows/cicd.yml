@@ -115,7 +115,11 @@ jobs:
         run: |
           nohup emulator -avd test \
             -no-window -no-audio -no-boot-anim \
-            -gpu swiftshader_indirect -accel off > /dev/null 2>&1 &
+            -gpu off \                  # 🔥 CHANGE
+            -accel off \
+            -no-snapshot \              # 🔥 ADD
+            -no-snapshot-save \         # 🔥 ADD
+            -no-snapshot-load > /dev/null 2>&1 &
       
           adb wait-for-device
       
@@ -123,7 +127,7 @@ jobs:
       
           echo "Waiting for full boot..."
           boot_completed="0"
-          for i in {1..60}; do   # 🔥 max ~5 mins
+          for i in {1..60}; do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
             if [ "$boot_completed" = "1" ]; then
               echo "Emulator booted!"
