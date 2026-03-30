@@ -143,10 +143,10 @@ jobs:
         run: |
           nohup $ANDROID_HOME/emulator/emulator -avd test \
             -no-window -no-audio -no-boot-anim \
-            -gpu off \                  # 🔥 CHANGE
+            -gpu off \                  
             -accel off \
-            -no-snapshot \              # 🔥 ADD
-            -no-snapshot-save \         # 🔥 ADD
+            -no-snapshot \              
+            -no-snapshot-save \         
             -no-snapshot-load > /dev/null 2>&1 &
         
           adb wait-for-device
@@ -172,7 +172,7 @@ jobs:
       
           adb shell input keyevent 82
       
-          # Disable animations
+        # Disable animations
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
