@@ -109,7 +109,15 @@ jobs:
 
       - name: Create AVD
         run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force
+          mkdir -p ~/.android/avd 
+          echo "no" | avdmanager create avd \
+          -n test -k "system-images;android-29;google_apis;x86_64" \
+          --force
+           avdmanager list avd
+
+      - name: Set AVD Path
+        run: |
+          echo "ANDROID_AVD_HOME=$HOME/.android/avd" >> $GITHUB_ENV
 
       - name: Start Emulator
         run: |
