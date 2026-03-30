@@ -186,14 +186,16 @@ jobs:
       - name: Install App (Android)
         run: |
           adb wait-for-device
-
+          
           echo "Waiting for package manager..."
-          adb shell while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done
-
+          while [[ -z $(adb shell getprop sys.boot_completed | tr -d '\r') ]]; do
+            sleep 2
+          done
+          
           sleep 15
-
+          
           adb shell input keyevent 82
-
+          
           for i in {1..5}; do
             adb install android_app.apk && break
             echo "Retrying install..."
