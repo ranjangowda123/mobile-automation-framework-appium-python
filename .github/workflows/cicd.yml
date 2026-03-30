@@ -192,7 +192,10 @@ jobs:
           while [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]; do
             sleep 2
           done
-
+          
+          echo "Stabilizing system..."
+          sleep 60
+          
           echo "Waiting for package service..."
           for i in {1..60}; do
             if adb shell pm path android >/dev/null 2>&1; then
