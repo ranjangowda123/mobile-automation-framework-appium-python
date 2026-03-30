@@ -137,7 +137,7 @@ jobs:
 
       - name: Set AVD Path
         run: |
-          echo "ANDROID_AVD_HOME=$HOME/.android/avd" >> $GITHUB_ENV
+          echo "ANDROID_AVD_HOME=$HOME/.config/.android/avd" >> $GITHUB_ENV
 
       - name: Start Emulator
         run: |
