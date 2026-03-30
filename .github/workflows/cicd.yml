@@ -186,37 +186,38 @@ jobs:
       - name: Install App (Android)
         run: |
           adb wait-for-device
-          
-          echo "Waiting for package manager..."
-          for i in {1..30}; do
-            boot=$(adb shell getprop sys.boot_completed | tr -d '\r')
-            if [ "$boot" = "1" ]; then
-              echo "Package manager ready"
-              break
-            fi
-            sleep 2
-          done
-      
-          # Fail fast if not ready
-          if [ "$boot" != "1" ]; then
-            echo "Emulator not ready in time ❌"
-            adb logcat -d | tail -n 50
-            exit 1
-          fi
-          
-          sleep 15
-          adb shell input keyevent 82
       
           echo "Starting APK install..."
       
+          success=0
+      
           for i in {1..5}; do
             echo "Install attempt $i..."
-            adb install -r -g android_app.apk && echo "Install success ✅" && break
-            echo "Retrying install..."
+      
+            # Try normal install
+            if adb install -r -g -t android_app.apk; then
+              echo "Install success (adb) ✅"
+              success=1
+              break
+            fi
+      
+            echo "Normal install failed, trying fallback..."
+      
+            # Fallback
+            if adb push android_app.apk /data/local/tmp/ && adb shell pm install -r /data/local/tmp/android_app.apk; then
+              echo "Install success (fallback) ✅"
+              success=1
+              break
+            fi
+      
+            echo "Retrying..."
             sleep 10
           done
       
-          echo "Install step finished"
+          if [ "$success" -ne 1 ]; then
+            echo "Install failed after retries ❌"
+            exit 1
+          fi
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator
