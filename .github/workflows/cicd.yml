@@ -196,16 +196,27 @@ jobs:
             fi
             sleep 2
           done
+      
+          # Fail fast if not ready
+          if [ "$boot" != "1" ]; then
+            echo "Emulator not ready in time ❌"
+            adb logcat -d | tail -n 50
+            exit 1
+          fi
           
           sleep 15
-          
           adb shell input keyevent 82
-          
+      
+          echo "Starting APK install..."
+      
           for i in {1..5}; do
-            adb install android_app.apk && break
+            echo "Install attempt $i..."
+            adb install -r -g android_app.apk && echo "Install success ✅" && break
             echo "Retrying install..."
             sleep 10
           done
+      
+          echo "Install step finished"
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator
