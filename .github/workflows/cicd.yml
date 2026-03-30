@@ -228,10 +228,10 @@ jobs:
           while [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]; do
             sleep 2
           done
-          
+
           echo "Stabilizing system..."
           sleep 60
-          
+
           echo "Waiting for package service..."
           for i in {1..60}; do
             if adb shell pm path android >/dev/null 2>&1; then
@@ -241,9 +241,13 @@ jobs:
             echo "Still waiting..."
             sleep 2
           done
-          
+
           adb shell input keyevent 82 || true
-          
+
+          # ✅ Disable Play Protect / verifier (CRITICAL FIX)
+          adb shell settings put global verifier_verify_adb_installs 0 || true
+          adb shell settings put global package_verifier_enable 0 || true
+
           # Fail fast if package service not ready
           if ! adb shell pm path android >/dev/null 2>&1; then
             echo "Package service not available ❌"
@@ -257,25 +261,36 @@ jobs:
 
           for i in {1..5}; do
             echo "Install attempt $i..."
-          
-            # Add timeout (IMPORTANT)
-            if timeout 120 adb install -r -g -t android_app.apk; then
+
+            # ✅ Primary install (with timeout)
+            if timeout 180 adb install -r -g -t android_app.apk; then
               echo "Install success (adb) ✅"
               success=1
               break
             fi
-          
+
             echo "Normal install failed or timed out, trying fallback..."
-          
-            if adb push android_app.apk /data/local/tmp/ && adb shell pm install -r -g /data/local/tmp/android_app.apk; then
+
+            # ✅ Push APK
+            adb push android_app.apk /data/local/tmp/
+
+            # ✅ Fallback install with timeout (IMPORTANT FIX)
+            if timeout 180 adb shell pm install -r -g /data/local/tmp/android_app.apk; then
               echo "Install success (fallback) ✅"
               success=1
               break
             fi
-          
+
             echo "Retrying..."
             sleep 10
           done
+
+          # ❌ Final failure check (IMPORTANT)
+          if [ "$success" -ne 1 ]; then
+            echo "❌ APK installation failed after retries"
+            adb logcat -d | tail -n 200
+            exit 1
+          fi
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator
