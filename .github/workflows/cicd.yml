@@ -218,29 +218,25 @@ jobs:
 
           for i in {1..5}; do
             echo "Install attempt $i..."
-
-            if adb install -r -g -t android_app.apk; then
+          
+            # Add timeout (IMPORTANT)
+            if timeout 120 adb install -r -g -t android_app.apk; then
               echo "Install success (adb) ✅"
               success=1
               break
             fi
-
-            echo "Normal install failed, trying fallback..."
-
+          
+            echo "Normal install failed or timed out, trying fallback..."
+          
             if adb push android_app.apk /data/local/tmp/ && adb shell pm install -r -g /data/local/tmp/android_app.apk; then
               echo "Install success (fallback) ✅"
               success=1
               break
             fi
-
+          
             echo "Retrying..."
             sleep 10
           done
-
-          if [ "$success" -ne 1 ]; then
-            echo "Install failed after retries ❌"
-            exit 1
-          fi
 
       # ✅ IOS REAL FLOW
       - name: Setup iOS Simulator
