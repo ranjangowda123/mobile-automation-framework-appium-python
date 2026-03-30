@@ -104,20 +104,36 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
           disable-animations: true
           script: |
+            adb kill-server
+            adb start-server
+
+            echo "Waiting for emulator..."
+
             adb wait-for-device
-      
-            echo "Waiting for emulator to boot..."
-      
+
+            echo "Fixing adb offline issue..."
+
+            adb devices
+
+            # 🔥 Retry until device is online
+            for i in {1..10}; do
+              adb shell echo "device ready" && break
+              echo "Retry adb connection..."
+              sleep 5
+            done
+
+            echo "Waiting for full boot..."
+
             boot_completed=""
             until [[ "$boot_completed" == "1" ]]; do
               boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               sleep 5
             done
-      
+
             echo "Emulator ready"
-      
+
             adb shell input keyevent 82
-      
+
             adb shell settings put global window_animation_scale 0
             adb shell settings put global transition_animation_scale 0
             adb shell settings put global animator_duration_scale 0
