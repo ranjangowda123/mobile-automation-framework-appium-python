@@ -118,13 +118,25 @@ jobs:
             -gpu swiftshader_indirect -accel off > /dev/null 2>&1 &
       
           adb wait-for-device
-          adb shell settings put global adb_enabled 1
+      
           adb devices
-          
+      
           echo "Waiting for full boot..."
-          until adb shell getprop sys.boot_completed | grep -m 1 '1'; do
+          boot_completed="0"
+          for i in {1..60}; do   # 🔥 max ~5 mins
+            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$boot_completed" = "1" ]; then
+              echo "Emulator booted!"
+              break
+            fi
             sleep 5
           done
+      
+          if [ "$boot_completed" != "1" ]; then
+            echo "Emulator failed to boot"
+            adb logcat -d | tail -n 50
+            exit 1
+          fi
       
           adb shell input keyevent 82
       
