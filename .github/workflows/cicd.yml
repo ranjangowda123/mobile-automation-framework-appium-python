@@ -271,14 +271,18 @@ jobs:
 
             echo "Normal install failed or timed out, trying fallback..."
 
-            # ✅ Push APK
             adb push android_app.apk /data/local/tmp/
-
-            # ✅ Fallback install with timeout (IMPORTANT FIX)
-            if timeout 180 adb shell pm install -r -g /data/local/tmp/android_app.apk; then
+            
+            INSTALL_RESULT=$(timeout 180 adb shell pm install -r -g /data/local/tmp/android_app.apk 2>&1)
+            
+            echo "$INSTALL_RESULT"
+            
+            if echo "$INSTALL_RESULT" | grep -q "Success"; then
               echo "Install success (fallback) ✅"
               success=1
               break
+            else
+              echo "Fallback install failed ❌"
             fi
 
             echo "Retrying..."
