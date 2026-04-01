@@ -232,15 +232,18 @@ jobs:
           echo "Stabilizing system..."
           sleep 60
 
-          echo "Waiting for package service..."
-          for i in {1..60}; do
-            if adb shell pm path android >/dev/null 2>&1; then
-              echo "Package service ready ✅"
-              break
-            fi
-            echo "Still waiting..."
+          echo "Waiting for full boot + package manager..."
+          
+          adb shell while [ -z "$(getprop dev.bootcomplete)" ]; do sleep 2; done
+          adb shell while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 2; done
+          
+          # 🔥 Strong check (THIS was missing)
+          adb shell until pm list packages >/dev/null 2>&1; do
+            echo "Waiting for package manager..."
             sleep 2
           done
+          
+          echo "Device fully ready ✅"
 
           adb shell input keyevent 82 || true
 
@@ -256,7 +259,10 @@ jobs:
           fi
 
           echo "Starting APK install..."
-
+          
+          echo "Cleaning previous app (if exists)..."
+          adb shell pm uninstall com.konze.tutor || true
+          
           success=0
 
           for i in {1..5}; do
@@ -271,18 +277,14 @@ jobs:
 
             echo "Normal install failed or timed out, trying fallback..."
 
-            adb push android_app.apk /data/local/tmp/
-            
-            INSTALL_RESULT=$(timeout 180 adb shell pm install -r -g /data/local/tmp/android_app.apk 2>&1)
-            
-            echo "$INSTALL_RESULT"
-            
-            if echo "$INSTALL_RESULT" | grep -q "Success"; then
-              echo "Install success (fallback) ✅"
+            echo "Trying alternative install..."
+
+            if timeout 300 adb install --no-streaming android_app.apk; then
+              echo "Install success (no-streaming) ✅"
               success=1
               break
             else
-              echo "Fallback install failed ❌"
+              echo "Alternative install failed ❌"
             fi
 
             echo "Retrying..."
