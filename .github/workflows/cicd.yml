@@ -234,8 +234,8 @@ jobs:
 
           echo "Waiting for full boot + package manager..."
           
-          adb shell while [ -z "$(getprop dev.bootcomplete)" ]; do sleep 2; done
-          adb shell while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 2; done
+          adb shell 'while [ -z "$(getprop dev.bootcomplete)" ]; do sleep 2; done'
+          adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 2; done'
           
           # 🔥 Strong check (THIS was missing)
           adb shell until pm list packages >/dev/null 2>&1; do
